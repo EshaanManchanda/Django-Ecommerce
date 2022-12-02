@@ -7,6 +7,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(
 SECRET_KEY = config('SECRET_KEY')
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -21,7 +22,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'django_countries',
 
-    'core'
+    'core',
 ]
 
 MIDDLEWARE = [
