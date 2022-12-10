@@ -2,7 +2,7 @@
 
 {% block content %}
 
-  <main class="mt-5 pt-4">
+  <main class="mt-5 pt-4 ">
     <div class="container dark-grey-text mt-5">
 
       <!--Grid row-->
@@ -11,7 +11,7 @@
         <!--Grid column-->
         <div class="col-md-6 mb-4">
 
-          <img src="{{object.image.url}}" class="img-fluid" alt="">
+          <img src="{{object.image.url}}" class="img-fluid shadow-lg p-3 mb-5 bg-body rounded" alt="{{object.title}}">
 
         </div>
         <!--Grid column-->
@@ -27,6 +27,7 @@
                 <span class="badge purple mr-1">{{ object.get_category_display }}</span>
               </a>
             </div>
+            <p class="mr-2 lead font-weight-bold">{{object.title}}</p>
 
             <p class="lead">
               {% if object.discount_price %}
@@ -69,7 +70,7 @@
       </div>
       <!--Grid row-->
 
-      <hr>
+      {% comment %} <hr>
 
       <!--Grid row-->
       <div class="row d-flex justify-content-center wow fadeIn">
@@ -117,7 +118,7 @@
         <!--Grid column-->
 
       </div>
-      <!--Grid row-->
+      <!--Grid row--> {% endcomment %}
 
     </div>
   </main>

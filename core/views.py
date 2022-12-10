@@ -13,7 +13,7 @@ from django.utils import timezone
 from django.views.generic import ListView, DetailView, View
 
 from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm
-from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile
+from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile,CATEGORY_CHOICES
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -73,6 +73,8 @@ class CheckoutView(View):
 
     def post(self, *args, **kwargs):
         form = CheckoutForm(self.request.POST or None)
+        print(self.request.POST)
+        payment = Payment()
         try:
             order = Order.objects.get(user=self.request.user, ordered=False)
             if form.is_valid():
@@ -197,6 +199,22 @@ class CheckoutView(View):
                     return redirect('core:payment', payment_option='stripe')
                 elif payment_option == 'P':
                     return redirect('core:payment', payment_option='paypal')
+                elif payment_option == 'C':
+                    order_items = order.items.all()
+                    order_items.update(ordered=True)
+                    payment.user = self.request.user
+                    payment.amount = order.get_total()
+                    payment.save()
+                    for item in order_items:
+                        item.save()
+
+                    order.ordered = True
+                    order.payment = payment
+                    order.ref_code = create_ref_code()
+                    order.save()
+
+                    messages.success(self.request, "Your order was successful!")
+                    return redirect('/')
                 else:
                     messages.warning(
                         self.request, "Invalid payment option selected")
@@ -213,7 +231,7 @@ class PaymentView(View):
             context = {
                 'order': order,
                 'DISPLAY_COUPON_FORM': False,
-                'STRIPE_PUBLIC_KEY' : settings.STRIPE_PUBLIC_KEY
+                'STRIPE_PUBLIC_KEY': settings.STRIPE_PUBLIC_KEY
             }
             userprofile = self.request.user.userprofile
             if userprofile.one_click_purchasing:

@@ -70,11 +70,13 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root')
 
 # Auth
-
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend'
 )
+# ACCOUNT_CONFIRM_EMAIL_ON_GET =True
+# ACCOUNT_EMAIL_REQUIRED =True
+# ACCOUNT_EMAIL_VERIFICATION =("mandatory")
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
 
@@ -83,7 +85,6 @@ LOGIN_REDIRECT_URL = '/'
 
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-0
 
 
 # EMAIL_BACKEND - 'django.core.mail.backends.smtp.EmailBackend'
