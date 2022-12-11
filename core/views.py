@@ -1,6 +1,7 @@
 import random
 import string
-
+from django.shortcuts import render
+from django.views.generic.edit import FormView
 import stripe
 from django.conf import settings
 from django.contrib import messages
@@ -13,7 +14,8 @@ from django.utils import timezone
 from django.views.generic import ListView, DetailView, View
 
 from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm
-from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile,CATEGORY_CHOICES
+from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile,AboutUs
+from . import models
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -368,6 +370,14 @@ class HomeView(ListView):
     paginate_by = 10
     template_name = "home.html"
 
+class Author(DetailView):
+    model = AboutUs
+    template_name = "author.html"
+
+def AboutUs(request):
+    data=models.AboutUs.objects.all()
+    return render(request, "aboutus.html",{'data':data})
+
 
 class OrderSummaryView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
@@ -535,3 +545,18 @@ class RequestRefundView(View):
             except ObjectDoesNotExist:
                 messages.info(self.request, "This order does not exist.")
                 return redirect("core:request-refund")
+class FileFieldFormView(FormView):
+    form_class = AboutUs
+    template_name = 'upload.html'  # Replace with your template.
+    success_url = '...'  # Replace with your URL or reverse().
+
+    def post(self, request, *args, **kwargs):
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        files = request.FILES.getlist('file_field')
+        if form.is_valid():
+            for f in files:
+                ...  # Do something with each file.
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)

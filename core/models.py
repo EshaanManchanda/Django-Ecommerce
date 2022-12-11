@@ -1,3 +1,4 @@
+from django import forms
 from django.db.models.signals import post_save
 from django.conf import settings
 from django.db import models
@@ -148,6 +149,18 @@ class Address(models.Model):
     class Meta:
         verbose_name_plural = 'Addresses'
 
+class AboutUs(models.Model):
+    user= models.CharField(max_length=100)
+    about_us = models.TextField()
+    # resume= forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    slug = models.SlugField(unique=True)
+    image = models.ImageField()
+
+    def __str__(self):
+        return self.user
+
+    class Meta:
+        verbose_name_plural = 'About Us'
 
 class Payment(models.Model):
     stripe_charge_id = models.CharField(max_length=50)

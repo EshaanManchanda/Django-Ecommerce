@@ -1,0 +1,8 @@
+{% extends "base.html" %} {% block content %}
+{% for user in data %}
+<div class="container black-text">
+    <a href="{% url 'core:author' user.slug %}">{{user.user}}</a>
+    {% comment %} <a href="{% url 'core:aboutus' user.user %}">{{user.user}}</a> {% endcomment %}
+</div>
+{% endfor %}
+{%endblock content%}
