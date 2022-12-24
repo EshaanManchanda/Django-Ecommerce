@@ -14,7 +14,7 @@ from django.utils import timezone
 from django.views.generic import ListView, DetailView, View
 
 from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm
-from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile,AboutUs
+from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile,AboutUs,ContactForm
 from . import models
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -376,6 +376,16 @@ class Author(DetailView):
 
 def AboutUs(request):
     data=models.AboutUs.objects.all()
+    if request.method =="POST":
+        ContactF=ContactForm()
+        name=request.POST.get('name')
+        email=request.POST.get('email')
+        subject=request.POST.get('subject')
+        ContactF.name=name
+        ContactF.email=email
+        ContactF.subject=subject
+        ContactF.save()
+        messages.success(request, "Successfully submitted you form")
     return render(request, "aboutus.html",{'data':data})
 
 

@@ -43,8 +43,7 @@ class Item(models.Model):
     label = models.CharField(choices=LABEL_CHOICES, max_length=1)
     slug = models.SlugField(unique=True)
     description = models.TextField()
-    image = models.ImageField()
-
+    image = models.ImageField(upload_to='Porduct')
     def __str__(self):
         return self.title
 
@@ -148,20 +147,6 @@ class Address(models.Model):
 
     class Meta:
         verbose_name_plural = 'Addresses'
-
-class AboutUs(models.Model):
-    user= models.CharField(max_length=100)
-    about_us = models.TextField()
-    # resume= forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
-    slug = models.SlugField(unique=True)
-    image = models.ImageField()
-
-    def __str__(self):
-        return self.user
-
-    class Meta:
-        verbose_name_plural = 'About Us'
-
 class Payment(models.Model):
     stripe_charge_id = models.CharField(max_length=50)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -197,3 +182,36 @@ def userprofile_receiver(sender, instance, created, *args, **kwargs):
 
 
 post_save.connect(userprofile_receiver, sender=settings.AUTH_USER_MODEL)
+
+class AboutUs(models.Model):
+    user= models.CharField(max_length=100)
+    about_us = models.TextField()
+    # resume= forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    slug = models.SlugField(unique=True)
+    work= models.CharField(max_length=20)
+    email=models.EmailField()
+    image = models.ImageField(upload_to='authorImg',blank=True)
+    resume=models.FileField(upload_to='resume',blank=True)
+    linkedin_url=models.CharField(max_length=255,null=True,blank=True)
+    instagram_url=models.CharField(max_length=255,null=True,blank=True)
+    Youtube_url=models.CharField(max_length=255,null=True,blank=True)
+    Facebook_url=models.CharField(max_length=255,null=True,blank=True)
+    github_url=models.CharField(max_length=255,null=True,blank=True)
+    other=models.CharField(max_length=255,null=True,blank=True)
+    project_Img=models.ImageField(upload_to='project_images',blank=True)
+
+
+    def __str__(self):
+        return self.user
+
+    class Meta:
+        verbose_name_plural = 'About Us'
+class ContactForm(models.Model):
+    name= models.CharField(max_length=100)
+    email=models.EmailField()
+    subject=models.TextField()
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = 'Contact Form'
