@@ -2,6 +2,7 @@ from .base import *
 
 DEBUG = True
 # 192.168.29.150
+# 192.168.225.194
 ALLOWED_HOSTS = ['192.168.29.150']
 
 INSTALLED_APPS += [
