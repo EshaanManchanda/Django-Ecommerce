@@ -11,10 +11,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
-from django.views.generic import ListView, DetailView, View
+from django.views.generic import ListView, DetailView, View,TemplateView
 
 from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm
-from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile,AboutUs,ContactForm
+from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile,AboutUs,ContactForm,category
 from . import models
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -367,8 +367,26 @@ class PaymentView(View):
 
 class HomeView(ListView):
     model = Item
-    paginate_by = 10
+    paginate_by = 8
     template_name = "home.html"
+    category=category.objects.all()
+    context={
+        'category':category
+    }
+    
+
+class CatView(ListView):
+    model=Item
+    paginate_by=8
+    template_name="home.html"
+    # context_object_name="object_list"
+    def get_queryset(self):
+        self.catr = get_object_or_404(category, category=self.kwargs['category'])
+        return Item.objects.filter(category=self.catr)
+
+    
+    
+    
 
 class Author(DetailView):
     model = AboutUs

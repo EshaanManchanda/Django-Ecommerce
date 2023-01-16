@@ -1,7 +1,7 @@
 <p align="center">
   <p align="center">
-    <a href="https://justdjango.com/?utm_source=github&utm_medium=logo" target="_blank">
-      <img src="https://assets.justdjango.com/static/branding/logo.svg" alt="JustDjango" height="72">
+    <a href="https://www.youtube.com/@TechLovev_212subs" target="_blank">
+      <img src="https://yt3.googleusercontent.com/ytc/AMLnZu-_wp5HMCgro_T8NDZc5YysCvLfT5lS7ILKHB9z=s88-c-k-c0x00ffffff-no-rj" alt="Tech Love V" height="72">
     </a>
   </p>
   <p align="center">
@@ -9,27 +9,13 @@
   </p>
 </p>
 
-### *** Deprecation warning ***
-
-This project was created almost two years ago. Since then, there is a newer version of the project which you can find [here](https://github.com/justdjango/django-simple-ecommerce)
-
----
-
 # Django E-commerce
 
 This is a very simple e-commerce website built with Django.
 
-## Quick demo
-
-[![alt text](https://justdjango.s3-us-west-2.amazonaws.com/media/gifs/djecommerce.gif "Logo")](https://youtu.be/z4USlooVXG0)
-
----
-
 ## Project Summary
 
 The website displays products. Users can add and remove products to/from their cart while also specifying the quantity of each item. They can then enter their address and choose Stripe to handle the payment processing.
-
-[![alt text](https://justdjango.s3-us-west-2.amazonaws.com/media/thumbnails/djecommerce.png "Logo")](https://youtu.be/z4USlooVXG0)
 
 ---
 
@@ -44,13 +30,13 @@ pip install virtualenv
 Clone or download this repository and open it in your editor of choice. In a terminal (mac/linux) or windows terminal, run the following command in the base directory of this project
 
 ```
-virtualenv env
+virtualenv venv
 ```
 
 That will create a new folder `env` in your project directory. Next activate it with this command on mac/linux:
 
 ```
-source env/bin/active
+source venv/Scripts/active
 ```
 
 Then install the project dependencies with
@@ -62,14 +48,14 @@ pip install -r requirements.txt
 Now you can run the project with this command
 
 ```
-python manage.py runserver
+python manage.py runserver (*ip Address:port,) 192.150.67.140:8000
 ```
 
 **Note** if you want payments to work you will need to enter your own Stripe API keys into the `.env` file in the settings files.
 
 ---
 
-## Follow the tutorial
+## This porject is made by Tech Love V , With the help of "Just Django " Youtuber he make full tutorial mention below.
 
 This project is part of a [series on YouTube](https://youtu.be/z4USlooVXG0) that teaches how to build an e-commerce website with Django.
 

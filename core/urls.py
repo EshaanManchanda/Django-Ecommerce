@@ -12,12 +12,14 @@ from .views import (
     RequestRefundView,
     AboutUs,
     Author,
+    CatView,
 )
 
 app_name = 'core'
 
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
+    path('category/<category>', CatView.as_view(), name='category'),
     path('checkout/', CheckoutView.as_view(), name='checkout'),
     path('aboutus/', AboutUs,name='aboutus'),
     path('aboutus/<slug>',Author.as_view(),name='author'),

@@ -39,7 +39,9 @@ class Item(models.Model):
     title = models.CharField(max_length=100)
     price = models.FloatField()
     discount_price = models.FloatField(blank=True, null=True)
-    category = models.CharField(choices=CATEGORY_CHOICES, max_length=2)
+    # category = models.CharField(choices=CATEGORY_CHOICES, max_length=2)
+    category = models.ForeignKey(
+        'category', on_delete=models.SET_NULL, blank=True, null=True)
     label = models.CharField(choices=LABEL_CHOICES, max_length=1)
     slug = models.SlugField(unique=True)
     description = models.TextField()
@@ -165,6 +167,12 @@ class Coupon(models.Model):
     def __str__(self):
         return self.code
 
+class category(models.Model):
+    category = models.CharField(max_length=25)
+    slug=models.SlugField(unique=True, default=True)
+
+    def __str__(self):
+        return self.category
 
 class Refund(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)

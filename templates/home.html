@@ -44,13 +44,15 @@
               Categories
             </a>
             <ul class="dropdown-menu" aria-labelledby="category">
-              {% for cat in object_list%} {% comment %}
+              {% for cat in object_list%}   
+              
+              {% comment %}
               <li><a class="dropdown-item" href="#">active</a></li>
               <li><a class="dropdown-item" href="#">second</a></li>
               {% endcomment %}
               <li>
-                <a class="dropdown-item" href="#"
-                  >{{cat.get_category_display}}</a
+                <a class="dropdown-item" href="{% url 'core:category' cat.category %}"
+                  >{{cat.category}}</a
                 >
               </li>
               {% endfor %}
@@ -69,10 +71,12 @@
         <div class="col-lg-3 col-md-6 mb-4">
           <div class="card">
             <div class="view overlay ">
+              <div class="card-img">
                 <img
                 src="{{ item.image.url }}"
-                class="card-img-top"
+                class="card-img"
               />
+              </div>
               <a href="{{ item.get_absolute_url }}">
                 <div class="mask rgba-white-slight"></div>
               </a>
@@ -80,7 +84,7 @@
 
             <div class="card-body text-center bg-dark">
               <a href="" class="grey-text">
-                <h5>{{ item.get_category_display }}</h5>
+                <h5>{{ item.category}}</h5>
               </a>
               <h5>
                 <strong>
