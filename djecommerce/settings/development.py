@@ -1,9 +1,12 @@
 from .base import *
 
-DEBUG = True
+DEBUG =True
 # 192.168.29.150
 # 192.168.225.194
-ALLOWED_HOSTS = ['192.168.29.150']
+# 192.168.29.127
+# 192.168.13.62
+# 127.0.0.1
+ALLOWED_HOSTS = ['192.168.29.127']
 
 INSTALLED_APPS += [
     'debug_toolbar'
