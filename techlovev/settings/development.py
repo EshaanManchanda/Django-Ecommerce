@@ -3,6 +3,7 @@ from .base import *
 DEBUG = True
 # 192.168.29.150
 # 192.168.225.194
+# 127.0.0.1
 ALLOWED_HOSTS = ['192.168.29.150']
 
 INSTALLED_APPS += [
@@ -30,7 +31,7 @@ DEBUG_TOOLBAR_PANELS = [
 
 
 def show_toolbar(request):
-    return True
+    return False
 
 
 DEBUG_TOOLBAR_CONFIG = {
