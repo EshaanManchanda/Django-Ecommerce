@@ -5,7 +5,7 @@
     <nav
       class="navbar navbar-expand-lg navbar-light bg-warning lighten-3 mt-3 mb-5"
     >
-    {% comment %} mdb-color {% endcomment %}
+      {% comment %} mdb-color {% endcomment %}
       <!-- Navbar brand -->
       <span class="navbar-brand">Categories:</span>
 
@@ -44,14 +44,14 @@
               Categories
             </a>
             <ul class="dropdown-menu" aria-labelledby="category">
-              {% for cat in object_list%}   
-              
-              {% comment %}
+              {% for cat in category%} {% comment %}
               <li><a class="dropdown-item" href="#">active</a></li>
               <li><a class="dropdown-item" href="#">second</a></li>
               {% endcomment %}
               <li>
-                <a class="dropdown-item" href="{% url 'core:category' cat.category %}"
+                <a
+                  class="dropdown-item"
+                  href="{% url 'core:category' cat.category %}"
                   >{{cat.category}}</a
                 >
               </li>
@@ -70,12 +70,9 @@
         {% for item in object_list %}
         <div class="col-lg-3 col-md-6 mb-4">
           <div class="card">
-            <div class="view overlay ">
+            <div class="view overlay">
               <div class="card-img">
-                <img
-                src="{{ item.image.url }}"
-                class="card-img"
-              />
+                <img src="{{ item.image.url }}" class="card-img" />
               </div>
               <a href="{{ item.get_absolute_url }}">
                 <div class="mask rgba-white-slight"></div>

@@ -48,6 +48,7 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.media',
                 'django.contrib.messages.context_processors.messages',
             ],
         },
@@ -75,22 +76,42 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend'
 )
-# ACCOUNT_CONFIRM_EMAIL_ON_GET =True
-# ACCOUNT_EMAIL_REQUIRED =True
-# ACCOUNT_EMAIL_VERIFICATION =("mandatory")
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = ("mandatory")
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
 
 # CRISPY FORMS
 
 
-
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 
-# EMAIL_BACKEND - 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST - 'smtp.gmail.com'
-# EMAIL_PORT - 587
-# EMAIL_USE_TLS - True
-# EMAIL_HOST_USER - "you@gmail.com"
-# EMAIL_HOST_PASSWORD - "get it from gmail app password bt setting 2 step authentication"
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = config('EMAIL_US')
+EMAIL_HOST_PASSWORD = config('PASSWORD_US')
+# EMAIL_HOST_USER = 'techlovev@gmail.com'
+# EMAIL_HOST_PASSWORD = 'gpzopwfnvxoxfkcw'
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Tech Love v Admin",
+    "site_header": "Tech Love V",
+    "site_brand": "Tech Love V",
+    "site_logo": "img/svg/icon.svg",
+    "login_logo": None,
+
+    # Logo to use for login form in dark themes (defaults to login_logo)
+    "login_logo_dark": None,
+
+    # CSS classes that are applied to the logo above
+    "site_logo_classes": "img-circle",
+
+    # Relative path to a favicon for your site, will default to site_logo if absent (ideally 32x32 px)
+    "site_icon": "img/svg/icon.svg",
+
+    # Welcome text on the login screen
+    "welcome_sign": "Welcome to the Tech Love V",
+}

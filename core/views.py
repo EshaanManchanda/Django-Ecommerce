@@ -11,10 +11,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
-from django.views.generic import ListView, DetailView, View,TemplateView
+from django.views.generic import ListView, DetailView, View, TemplateView
 
 from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm
-from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile,AboutUs,ContactForm,category
+from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile, AboutUs, ContactForm, category
 from . import models
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -77,6 +77,8 @@ class CheckoutView(View):
         form = CheckoutForm(self.request.POST or None)
         print(self.request.POST)
         payment = Payment()
+        bill = 0
+        shipping = 0
         try:
             order = Order.objects.get(user=self.request.user, ordered=False)
             if form.is_valid():
@@ -94,6 +96,7 @@ class CheckoutView(View):
                         shipping_address = address_qs[0]
                         order.shipping_address = shipping_address
                         order.save()
+                        shipping = 1
                     else:
                         messages.info(
                             self.request, "No default shipping address available")
@@ -121,6 +124,7 @@ class CheckoutView(View):
 
                         order.shipping_address = shipping_address
                         order.save()
+                        shipping = 1
 
                         set_default_shipping = form.cleaned_data.get(
                             'set_default_shipping')
@@ -157,6 +161,7 @@ class CheckoutView(View):
                         billing_address = address_qs[0]
                         order.billing_address = billing_address
                         order.save()
+                        bill = 1
                     else:
                         messages.info(
                             self.request, "No default billing address available")
@@ -184,6 +189,7 @@ class CheckoutView(View):
 
                         order.billing_address = billing_address
                         order.save()
+                        bill = 1
 
                         set_default_billing = form.cleaned_data.get(
                             'set_default_billing')
@@ -194,14 +200,13 @@ class CheckoutView(View):
                     else:
                         messages.info(
                             self.request, "Please fill in the required billing address fields")
-
                 payment_option = form.cleaned_data.get('payment_option')
 
-                if payment_option == 'S':
+                if payment_option == 'S'and bill == 1 and shipping == 1:
                     return redirect('core:payment', payment_option='stripe')
-                elif payment_option == 'P':
+                elif payment_option == 'P'and bill == 1 and shipping == 1:
                     return redirect('core:payment', payment_option='paypal')
-                elif payment_option == 'C':
+                elif payment_option == 'C' and bill == 1 and shipping == 1:
                     order_items = order.items.all()
                     order_items.update(ordered=True)
                     payment.user = self.request.user
@@ -215,12 +220,14 @@ class CheckoutView(View):
                     order.ref_code = create_ref_code()
                     order.save()
 
-                    messages.success(self.request, "Your order was successful!")
+                    messages.success(
+                        self.request, "Your order was successful!")
                     return redirect('/')
                 else:
                     messages.warning(
-                        self.request, "Invalid payment option selected")
+                        self.request, "Invalid Entry selected")
                     return redirect('core:checkout')
+
         except ObjectDoesNotExist:
             messages.warning(self.request, "You do not have an active order")
             return redirect("core:order-summary")
@@ -366,45 +373,61 @@ class PaymentView(View):
 
 
 class HomeView(ListView):
-    model = Item
+    # model = Item
     paginate_by = 8
     template_name = "home.html"
-    category=category.objects.all()
-    context={
-        'category':category
-    }
-    
+
+    def get_context_data(self, **kwargs):
+        context = super(HomeView, self).get_context_data(**kwargs)
+        context.update({
+            'category': category.objects.order_by('category'),
+            'item': Item.objects.all(),
+        })
+        return context
+
+    def get_queryset(self):
+        self.item = Item.objects.all()
+        return self.item
+
 
 class CatView(ListView):
-    model=Item
-    paginate_by=8
-    template_name="home.html"
-    # context_object_name="object_list"
+    # model=Item
+    paginate_by = 8
+    template_name = "home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(CatView, self).get_context_data(**kwargs)
+        context.update({
+            'category': category.objects.order_by('category'),
+            'item': Item.objects.all(),
+        })
+        return context
+
     def get_queryset(self):
-        self.catr = get_object_or_404(category, category=self.kwargs['category'])
+        self.catr = get_object_or_404(
+            category, category=self.kwargs['category'])
+
         return Item.objects.filter(category=self.catr)
 
-    
-    
-    
 
 class Author(DetailView):
     model = AboutUs
     template_name = "author.html"
 
+
 def AboutUs(request):
-    data=models.AboutUs.objects.all()
-    if request.method =="POST":
-        ContactF=ContactForm()
-        name=request.POST.get('name')
-        email=request.POST.get('email')
-        subject=request.POST.get('subject')
-        ContactF.name=name
-        ContactF.email=email
-        ContactF.subject=subject
+    data = models.AboutUs.objects.all()
+    if request.method == "POST":
+        ContactF = ContactForm()
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        subject = request.POST.get('subject')
+        ContactF.name = name
+        ContactF.email = email
+        ContactF.subject = subject
         ContactF.save()
         messages.success(request, "Successfully submitted you form")
-    return render(request, "aboutus.html",{'data':data})
+    return render(request, "aboutus.html", {'data': data})
 
 
 class OrderSummaryView(LoginRequiredMixin, View):
@@ -573,6 +596,8 @@ class RequestRefundView(View):
             except ObjectDoesNotExist:
                 messages.info(self.request, "This order does not exist.")
                 return redirect("core:request-refund")
+
+
 class FileFieldFormView(FormView):
     form_class = AboutUs
     template_name = 'upload.html'  # Replace with your template.

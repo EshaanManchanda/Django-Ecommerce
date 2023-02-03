@@ -38,14 +38,15 @@ class UserProfile(models.Model):
 class Item(models.Model):
     title = models.CharField(max_length=100)
     price = models.FloatField()
+    quantity = models.FloatField()
     discount_price = models.FloatField(blank=True, null=True)
-    # category = models.CharField(choices=CATEGORY_CHOICES, max_length=2)
     category = models.ForeignKey(
         'category', on_delete=models.SET_NULL, blank=True, null=True)
     label = models.CharField(choices=LABEL_CHOICES, max_length=1)
     slug = models.SlugField(unique=True)
     description = models.TextField()
     image = models.ImageField(upload_to='Porduct')
+
     def __str__(self):
         return self.title
 
@@ -149,6 +150,8 @@ class Address(models.Model):
 
     class Meta:
         verbose_name_plural = 'Addresses'
+
+
 class Payment(models.Model):
     stripe_charge_id = models.CharField(max_length=50)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -163,16 +166,19 @@ class Payment(models.Model):
 class Coupon(models.Model):
     code = models.CharField(max_length=15)
     amount = models.FloatField()
+    minCartValue = models.FloatField(default=True)
 
     def __str__(self):
         return self.code
 
+
 class category(models.Model):
-    category = models.CharField(max_length=25)
-    slug=models.SlugField(unique=True, default=True)
+    category = models.CharField(max_length=25, unique=True)
+    slug = models.SlugField(unique=True)
 
     def __str__(self):
         return self.category
+
 
 class Refund(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
@@ -191,33 +197,36 @@ def userprofile_receiver(sender, instance, created, *args, **kwargs):
 
 post_save.connect(userprofile_receiver, sender=settings.AUTH_USER_MODEL)
 
+
 class AboutUs(models.Model):
-    user= models.CharField(max_length=100)
+    user = models.CharField(max_length=100)
     about_us = models.TextField()
     # resume= forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
     slug = models.SlugField(unique=True)
-    work= models.CharField(max_length=20)
-    email=models.EmailField()
-    image = models.ImageField(upload_to='authorImg',blank=True)
-    resume=models.FileField(upload_to='resume',blank=True)
-    linkedin_url=models.CharField(max_length=255,null=True,blank=True)
-    instagram_url=models.CharField(max_length=255,null=True,blank=True)
-    Youtube_url=models.CharField(max_length=255,null=True,blank=True)
-    Facebook_url=models.CharField(max_length=255,null=True,blank=True)
-    github_url=models.CharField(max_length=255,null=True,blank=True)
-    other=models.CharField(max_length=255,null=True,blank=True)
-    project_Img=models.ImageField(upload_to='project_images',blank=True)
-
+    work = models.CharField(max_length=20)
+    email = models.EmailField()
+    image = models.ImageField(upload_to='authorImg', blank=True)
+    resume = models.FileField(upload_to='resume', blank=True)
+    linkedin_url = models.CharField(max_length=255, null=True, blank=True)
+    instagram_url = models.CharField(max_length=255, null=True, blank=True)
+    Youtube_url = models.CharField(max_length=255, null=True, blank=True)
+    Facebook_url = models.CharField(max_length=255, null=True, blank=True)
+    github_url = models.CharField(max_length=255, null=True, blank=True)
+    other = models.CharField(max_length=255, null=True, blank=True)
+    project_Img = models.ImageField(upload_to='project_images', blank=True)
 
     def __str__(self):
         return self.user
 
     class Meta:
         verbose_name_plural = 'About Us'
+
+
 class ContactForm(models.Model):
-    name= models.CharField(max_length=100)
-    email=models.EmailField()
-    subject=models.TextField()
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    subject = models.TextField()
+
     def __str__(self):
         return self.name
 
