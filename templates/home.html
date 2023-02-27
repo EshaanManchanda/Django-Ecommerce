@@ -1,4 +1,6 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %} 
+{% load slide_template_tags %}
+{% block content %}
 <main>
   <div class="container">
     <!--Navbar-->
@@ -51,7 +53,7 @@
               <li>
                 <a
                   class="dropdown-item"
-                  href="{% url 'core:category' cat.category %}"
+                  href="{% url 'core:category' cat.slug %}"
                   >{{cat.category}}</a
                 >
               </li>

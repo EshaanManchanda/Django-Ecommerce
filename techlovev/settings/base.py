@@ -20,10 +20,12 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'crispy_forms',
+    'crispy_bootstrap5',
     'django_countries',
     'fontawesomefree',
 
     'core',
+    'shops',
 ]
 
 MIDDLEWARE = [
@@ -77,15 +79,16 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend'
 )
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = ("mandatory")
+# ACCOUNT_EMAIL_REQUIRED = True
+# ACCOUNT_EMAIL_VERIFICATION = ("mandatory")
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
 
 # CRISPY FORMS
 
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 
 EMAIL_HOST = 'smtp.gmail.com'
@@ -93,8 +96,6 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config('EMAIL_US')
 EMAIL_HOST_PASSWORD = config('PASSWORD_US')
-# EMAIL_HOST_USER = 'techlovev@gmail.com'
-# EMAIL_HOST_PASSWORD = 'gpzopwfnvxoxfkcw'
 
 JAZZMIN_SETTINGS = {
     "site_title": "Tech Love v Admin",
@@ -115,3 +116,7 @@ JAZZMIN_SETTINGS = {
     # Welcome text on the login screen
     "welcome_sign": "Welcome to the Tech Love V",
 }
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+STRIPE_PUBLIC_KEY = config('STRIPE_TEST_PUBLIC_KEY')
+STRIPE_SECRET_KEY = config('STRIPE_TEST_SECRET_KEY')

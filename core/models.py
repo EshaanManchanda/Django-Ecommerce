@@ -3,7 +3,7 @@ from django.db.models.signals import post_save
 from django.conf import settings
 from django.db import models
 from django.db.models import Sum
-from django.shortcuts import reverse
+from django.shortcuts import get_object_or_404, reverse
 from django_countries.fields import CountryField
 
 
@@ -25,6 +25,17 @@ ADDRESS_CHOICES = (
 )
 
 
+class Slide(models.Model):
+    caption1 = models.CharField(max_length=100)
+    caption2 = models.CharField(max_length=100)
+    link = models.CharField(max_length=100)
+    image = models.ImageField(help_text="Size: 1920x570")
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return "{} - {}".format(self.caption1, self.caption2)
+
+
 class UserProfile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -35,17 +46,30 @@ class UserProfile(models.Model):
         return self.user.username
 
 
+class category(models.Model):
+    category = models.CharField(max_length=25, unique=True)
+    slug = models.SlugField(unique=True)
+    description = models.TextField()
+    image = models.ImageField(blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.category
+
+
 class Item(models.Model):
-    title = models.CharField(max_length=100)
-    price = models.FloatField()
-    quantity = models.FloatField()
+    title = models.CharField(max_length=100, null=True)
+    price = models.FloatField(null=True)
+    quantity = models.FloatField(null=True)
     discount_price = models.FloatField(blank=True, null=True)
     category = models.ForeignKey(
         'category', on_delete=models.SET_NULL, blank=True, null=True)
-    label = models.CharField(choices=LABEL_CHOICES, max_length=1)
-    slug = models.SlugField(unique=True)
-    description = models.TextField()
-    image = models.ImageField(upload_to='Porduct')
+    label = models.CharField(choices=LABEL_CHOICES, max_length=1, null=True)
+    slug = models.SlugField(unique=True, null=True)
+    description_short = models.CharField(max_length=50, blank=True)
+    description_long = models.TextField(null=True, blank=True)
+    image = models.ImageField(upload_to='Porduct', null=True)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.title
@@ -170,14 +194,6 @@ class Coupon(models.Model):
 
     def __str__(self):
         return self.code
-
-
-class category(models.Model):
-    category = models.CharField(max_length=25, unique=True)
-    slug = models.SlugField(unique=True)
-
-    def __str__(self):
-        return self.category
 
 
 class Refund(models.Model):

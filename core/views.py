@@ -14,7 +14,7 @@ from django.utils import timezone
 from django.views.generic import ListView, DetailView, View, TemplateView
 
 from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm
-from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile, AboutUs, ContactForm, category
+from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile, AboutUs, ContactForm, category as Category
 from . import models
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -213,7 +213,15 @@ class CheckoutView(View):
                     payment.amount = order.get_total()
                     payment.save()
                     for item in order_items:
-                        item.save()
+                        item_save = Item.objects.get(slug=item.item.slug)
+                        if item_save.quantity < item.quantity:
+                            messages.warning(
+                                self.request, f"please enter valid quantity {item_save.quantity} is available")
+                            return redirect('core:order-summary')
+                        else:
+                            item_save.quantity = item_save.quantity-item.quantity
+                            item_save.save()
+                            item.save()
 
                     order.ordered = True
                     order.payment = payment
@@ -294,14 +302,14 @@ class PaymentView(View):
                     # charge the customer because we cannot charge the token more than once
                     charge = stripe.Charge.create(
                         amount=amount,  # cents
-                        currency="usd",
+                        currency="inr",
                         customer=userprofile.stripe_customer_id
                     )
                 else:
                     # charge once off on the token
                     charge = stripe.Charge.create(
                         amount=amount,  # cents
-                        currency="usd",
+                        currency="inr",
                         source=token
                     )
 
@@ -318,13 +326,13 @@ class PaymentView(View):
                 order_items.update(ordered=True)
                 for item in order_items:
                     item.save()
-
                 order.ordered = True
                 order.payment = payment
                 order.ref_code = create_ref_code()
                 order.save()
 
                 messages.success(self.request, "Your order was successful!")
+
                 return redirect("/")
 
             except stripe.error.CardError as e:
@@ -380,34 +388,44 @@ class HomeView(ListView):
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         context.update({
-            'category': category.objects.order_by('category'),
+            'category': Category.objects.order_by('category'),
             'item': Item.objects.all(),
         })
         return context
 
     def get_queryset(self):
-        self.item = Item.objects.all()
+        self.item = Item.objects.filter(is_active=True)
         return self.item
 
 
 class CatView(ListView):
+    def get(self, *args, **kwargs):
+        category = Category.objects.get(slug=self.kwargs['slug'])
+        item = Item.objects.filter(category=category, is_active=True)
+        context = {
+            'object_list': item,
+            'category_title': category.category,
+            'category_description': category.description,
+            'category_image': category.image
+        }
+        return render(self.request, "category.html", context)
     # model=Item
-    paginate_by = 8
-    template_name = "home.html"
+    # paginate_by = 8
+    # template_name = "home.html"
 
-    def get_context_data(self, **kwargs):
-        context = super(CatView, self).get_context_data(**kwargs)
-        context.update({
-            'category': category.objects.order_by('category'),
-            'item': Item.objects.all(),
-        })
-        return context
+    # def get_context_data(self, **kwargs):
+    #     context = super(CatView, self).get_context_data(**kwargs)
+    #     context.update({
+    #         'category': category.objects.order_by('category'),
+    #         'item': Item.objects.all(),
+    #     })
+    #     return context
 
-    def get_queryset(self):
-        self.catr = get_object_or_404(
-            category, category=self.kwargs['category'])
+    # def get_queryset(self):
+    #     self.catr = get_object_or_404(
+    #         category, category=self.kwargs['category'])
 
-        return Item.objects.filter(category=self.catr)
+    #     return Item.objects.filter(category=self.catr)
 
 
 class Author(DetailView):
