@@ -110,6 +110,7 @@ class OrderItem(models.Model):
         return self.get_total_item_price() - self.get_total_discount_item_price()
 
     def get_final_price(self):
+        print(self.item.price)
         if self.item.discount_price:
             return self.get_total_discount_item_price()
         return self.get_total_item_price()

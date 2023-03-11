@@ -1,5 +1,6 @@
 import random
 import string
+import time
 from django.shortcuts import render
 from django.views.generic.edit import FormView
 import stripe
@@ -208,10 +209,6 @@ class CheckoutView(View):
                     return redirect('core:payment', payment_option='paypal')
                 elif payment_option == 'C' and bill == 1 and shipping == 1:
                     order_items = order.items.all()
-                    order_items.update(ordered=True)
-                    payment.user = self.request.user
-                    payment.amount = order.get_total()
-                    payment.save()
                     for item in order_items:
                         item_save = Item.objects.get(slug=item.item.slug)
                         if item_save.quantity < item.quantity:
@@ -220,9 +217,15 @@ class CheckoutView(View):
                             return redirect('core:order-summary')
                         else:
                             item_save.quantity = item_save.quantity-item.quantity
+                            if item_save.quantity < 1:
+                                item_save.is_active = False
                             item_save.save()
                             item.save()
 
+                    order_items.update(ordered=True)
+                    payment.user = self.request.user
+                    payment.amount = order.get_total()
+                    payment.save()
                     order.ordered = True
                     order.payment = payment
                     order.ref_code = create_ref_code()
@@ -399,6 +402,8 @@ class HomeView(ListView):
 
 
 class CatView(ListView):
+    paginate_by = 4
+
     def get(self, *args, **kwargs):
         category = Category.objects.get(slug=self.kwargs['slug'])
         item = Item.objects.filter(category=category, is_active=True)
@@ -482,10 +487,12 @@ def add_to_cart(request, slug):
             order_item.quantity += 1
             order_item.save()
             messages.info(request, "This item quantity was updated.")
+            time.sleep(1.5)
             return redirect("core:order-summary")
         else:
             order.items.add(order_item)
             messages.info(request, "This item was added to your cart.")
+            time.sleep(1.5)
             return redirect("core:order-summary")
     else:
         ordered_date = timezone.now()
